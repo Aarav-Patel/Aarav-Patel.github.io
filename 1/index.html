@@ -1,1 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cs180</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #007acc;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        section {
+            padding: 20px;
+            margin: 20px auto;
+            background-color: white;
+            max-width: 1000px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #007acc;
+        }
+        a {
+            color: #646b6e;
+            text-decoration: none; 
+        }
+
+
+        a:visited {
+            color: #646b6e; 
+        }
+
+
+        a:hover {
+            color: #ff6600; 
+        }
+
+
+        a:active {
+            color: #ff0000; 
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+        }
+    </style>
+    <title>Image Alignment Phases</title>
+    <style>
+        .image-container {
+            display: flex; 
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+
+        .phase-box {
+            text-align: center;
+            margin: 0 10px;
+        }
+
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+
+        .displacement {
+            font-size: 14px;
+            margin-top: 5px;
+            color: #333;
+        }
+
+        h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>CS 180 Project 1 –– Images of the Russian Empire: Colorizing the <a href="https://www.loc.gov/collections/prokudin-gorskii/" target="_blank">Prokudin-Gorskii Photo Collection</a></h1>
+    <p><b>Aarav Patel</b></p>
+</header>
+
+
+<section id="overview">
+    <h2>Overview</h2>
+    <p>Sergei Prokudin-Gorskii was a visionary photographer from the early 20th century who pioneered color photography. He captured his images through three exposures: red, green, and blue filters. However, there was no way to print color photos at the time. This project aims to extract and align the color channels from his digitized glass plate negatives to produce a color image.</p>
+</section>
+
+
+<section id="preprocessing">
+    <h2>Preprocessing</h2>
+    <p>After splitting the image into the three channels, I centered each one individually around a mean of 0. Centering the channels individually aids in eliminating the global brightness bias. This will ultimately help when aligning the channels as it will block brightness bias from interfering with the alignment metrics (reviewed in the next section). Additionally, I min-max normalized each channel to reduce the effect of outliers and bound the distribution between 0 and 1. </p>
+</section>
+
+
+<section id="naive-exhaustive-search">
+    <h2>Naive Exhaustive Search</h2>
+    <p>For all my implementations, I first aligned the green channel to the blue channel, then I aligned the red channel to the blue channel, and then lastly stacked the blue-aligned red channel, blue-aligned green channel, and blue channel to form a colorized image. In other words, the blue channel was my base. For my naive exhaustive search implementation, I used a double for-loop to traverse the two channels I wanted to align over a predefined search range. I computed a metric indicating how well the channels were aligned and returned the best displacement vector over the search range. I experimented with two metrics: the sum of squared differences (SSD) and normalized cross-correlation (NCC). I observed that SSD would result in better alignments on average and was faster–– I decided to stay consistent with using SSD for the rest of the project. After returning the best displacement vector, I used np.roll to align the channels as np.roll supports pixel wrapping when pushed beyond the max dimension.</p>
+</section>
+
+
+<section id="pyramid-search">
+    <h2>Pyramid Search</h2>
+    <p>Explain the brute-force exhaustive search approach for image matching, and showcase the results with images or comparison tables.</p>
+</section>
+
+
+<section id="edge-alignment">
+    <h2>Edge Alignment</h2>
+    <p>Describe the pyramid search approach, where images are downscaled and matched at multiple resolutions to speed up the process. Show results and comparisons.</p>
+</section>
+
+
+<section id="automatic-cropping">
+    <h2>Automatic Cropping</h2>
+    <p>Detail the additional features and refinements you've implemented beyond the basic search techniques, such as edge detection, advanced filtering, or improved alignment accuracy.</p>
+</section>
+
+
+<section id="final-results">
+    <h2>Final Results</h2>
+        <!-- Example for image1 -->
+    <div class="image-container">
+        <!-- Phase 1 -->
+        <div class="phase-box">
+            <h3>Phase 1</h3>
+            <img src="media/image1_phase1.jpg" alt="Image 1 - Phase 1">
+            <div class="displacement">Displacement: (5, -2)</div> <!-- Replace with actual displacement -->
+        </div>
+        
+        <!-- Phase 2 -->
+        <div class="phase-box">
+            <h3>Phase 2</h3>
+            <img src="media/image1_phase2.jpg" alt="Image 1 - Phase 2">
+            <div class="displacement">Displacement: (3, 1)</div> <!-- Replace with actual displacement -->
+        </div>
+        
+        <!-- Phase 3 -->
+        <div class="phase-box">
+            <h3>Phase 3</h3>
+            <img src="media/image1_phase3.jpg" alt="Image 1 - Phase 3">
+            <div class="displacement">Displacement: (1, -1)</div> <!-- Replace with actual displacement -->
+        </div>
+    </div>
+</section>
+
+</body>
+</html>
+
+
+
+
 
