@@ -130,7 +130,7 @@
 
 <section id="automatic-cropping">
     <h2>Automatic Cropping</h2>
-    <p>Detail the additional features and refinements you've implemented beyond the basic search techniques, such as edge detection, advanced filtering, or improved alignment accuracy.</p>
+    <p>Similar to edge alignment, my automatic cropping implementation also hinges on the Sobel Filter. Once again, a map is computed by sliding the 3x3 kernel over the image in the x and y directions to calculate the magnitude of the gradient at each pixel. The first rows and columns with pixels above a certain threshold of gradient are used to crop the image.</p>
 </section>
 
 
