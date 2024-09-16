@@ -118,13 +118,13 @@
 
 <section id="pyramid-search">
     <h2>Pyramid Search</h2>
-    <p>Explain the brute-force exhaustive search approach for image matching, and showcase the results with images or comparison tables.</p>
+    <p>As the naive exhaustive search is inefficient for large images, my next implementation utilized coarse-to-fine image pyramids for a performance boost. Alignment is first performed on a downscaled image, where fewer details make the process faster and help capture large displacements. This result is refined at each iteration, progressively scaling the image back to its original size.</p>
 </section>
 
 
 <section id="edge-alignment">
     <h2>Edge Alignment</h2>
-    <p>Describe the pyramid search approach, where images are downscaled and matched at multiple resolutions to speed up the process. Show results and comparisons.</p>
+    <p>The Sobel Filter is a standard method for edge detection in images. It works by computing the gradient of an image at each pixel by sliding a filter (3x3 kernel) over the picture in the x and y directions. Any magnitude of the gradient below a certain threshold is eliminated from the alignment map. The alignment map for each channel is used to guide the alignment of the image instead of the raw pixels. </p>
 </section>
 
 
@@ -135,36 +135,395 @@
 
 
 <section id="final-results">
+
     <h2>Final Results</h2>
-        <!-- Example for image1 -->
     <div class="image-container">
-        <!-- Phase 1 -->
+        <!-- train -->
         <div class="phase-box">
-            <h3>Phase 1</h3>
-            <img src="media/image1_phase1.jpg" alt="Image 1 - Phase 1">
-            <div class="displacement">Displacement: (5, -2)</div> <!-- Replace with actual displacement -->
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/train.jpg" alt="No Edge Alignment, No Cropping - Train">
+            <div class="displacement">Displacement (G, R): (112, -8), (104, 0)</div>
         </div>
         
-        <!-- Phase 2 -->
         <div class="phase-box">
-            <h3>Phase 2</h3>
-            <img src="media/image1_phase2.jpg" alt="Image 1 - Phase 2">
-            <div class="displacement">Displacement: (3, 1)</div> <!-- Replace with actual displacement -->
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/train.jpg" alt="Edge Alignment, No Cropping - Train">
+            <div class="displacement">Displacement (G, R): (48, 0), (88, 32)</div> 
+        </div>
+
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/train.jpg" alt="Edge Alignment, Cropping - Train">
+            <div class="displacement">Displacement (G, R): (-16, 0), (-32, 32)</div> 
+        </div>
+    </div>
+
+
+
+    <div class="image-container">
+        <!-- tobolsk -->
+        <div class="phase-box">
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/tobolsk.jpg" alt="No Edge Alignment, No Cropping - Tobolsk">
+            <div class="displacement">Displacement (G, R): (3, 2), (6, 3)</div> 
         </div>
         
-        <!-- Phase 3 -->
         <div class="phase-box">
-            <h3>Phase 3</h3>
-            <img src="media/image1_phase3.jpg" alt="Image 1 - Phase 3">
-            <div class="displacement">Displacement: (1, -1)</div> <!-- Replace with actual displacement -->
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/tobolsk.jpg" alt="Edge Alignment, No Cropping - Tobolsk">
+            <div class="displacement">Displacement (G, R): (3, 2), (7, 3)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/tobolsk.jpg" alt="Edge Alignment, Cropping - Tobolsk">
+            <div class="displacement">Displacement (G, R): (0, 2), (1, 3)</div>
+        </div>
+    </div>
+
+
+    <div class="image-container">
+        <!-- 3 gens -->
+        <div class="phase-box">
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/three_generations.jpg" alt="No Edge Alignment, No Cropping - Three Generations">
+            <div class="displacement">Displacement (G, R): (56, 16), (112, 8)</div>
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/three_generations.jpg" alt="Edge Alignment, No Cropping - Three Generations">
+            <div class="displacement">Displacement (G, R): (120, 0), (120, 8)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/three_generations.jpg" alt="Edge Alignment, Cropping - Three Generations">
+            <div class="displacement">Displacement (G, R): (-8, 16)</div> 
+        </div>
+    </div>
+
+
+    <div class="image-container">
+        <!-- self-portrait -->
+        <div class="phase-box">
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/self_portrait.jpg" alt="No Edge Alignment, No Cropping - Self Portrait">
+            <div class="displacement">Displacement (G, R): (48, 0), (128, -8)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/self_portrait.jpg" alt="Edge Alignment, No Cropping - Self Portrait">
+            <div class="displacement">Displacement (G, R): (80, 32), (176, 40)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/self_portrait.jpg" alt="Edge Alignment, Cropping - Self Portrait">
+            <div class="displacement">Displacement (G, R): (-8, 24), (8, 32)</div> 
+        </div>
+    </div>
+
+
+    <div class="image-container">
+        <!-- sculpture -->
+        <div class="phase-box">
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/sculpture.jpg" alt="No Edge Alignment, No Cropping - Sculpture">
+            <div class="displacement">Displacement (G, R): (32, -8), (144, -24)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/sculpture.jpg" alt="Edge Alignment, No Cropping - Sculpture">
+            <div class="displacement">Displacement (G, R): (32, -8), (136, -24)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/sculpture.jpg" alt="Edge Alignment, Cropping - Sculpture">
+            <div class="displacement">Displacement (G, R): (-40, -8), (0, -24)</div> 
+        </div>
+    </div>
+
+
+    <div class="image-container">
+        <!-- onion church -->
+        <div class="phase-box">
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/onion_church.jpg" alt="No Edge Alignment, No Cropping - Onion Church">
+            <div class="displacement">Displacement (G, R): (56, 16), (104, 8)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/onion_church.jpg" alt="Edge Alignment, No Cropping - Onion Church">
+            <div class="displacement">Displacement (G, R): (56, 24), (104, 40)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/onion_church.jpg" alt="Edge Alignment, Cropping - Onion Church">
+            <div class="displacement">Displacement (G, R): (-16, 24), (-24, 40)</div> 
+        </div>
+    </div>
+
+    <div class="image-container">
+        <!-- monastery -->
+        <div class="phase-box">
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/monastery.jpg" alt="No Edge Alignment, No Cropping - Monastery">
+            <div class="displacement">Displacement (G, R): (-6, 0), (9, 1)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/monastery.jpg" alt="Edge Alignment, No Cropping - Monastery">
+            <div class="displacement">Displacement (G, R): (-3, 1), (3, 2)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/monastery.jpg" alt="Edge Alignment, Cropping - Monastery">
+            <div class="displacement">Displacement (G, R): (-9, 1), (-9, 2)</div> 
+        </div>
+    </div>
+
+
+    <div class="image-container">
+        <!-- melons -->
+        <div class="phase-box">
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/melons.jpg" alt="No Edge Alignment, No Cropping - Melons">
+            <div class="displacement">Displacement (G, R): (112, -8), (104, 0)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/melons.jpg" alt="Edge Alignment, No Cropping - Melons">
+            <div class="displacement">Displacement (G, R): (80, 0), (176, 16)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/melons.jpg" alt="Edge Alignment, Cropping - Melons">
+            <div class="displacement">Displacement (G, R): (0, 8), (16, 16)</div> 
+        </div>
+    </div>
+
+    <div class="image-container">
+        <!-- lady -->
+        <div class="phase-box">
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/lady.jpg" alt="No Edge Alignment, No Cropping - Lady">
+            <div class="displacement">Displacement (G, R): (56, -8), (120, -16)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/lady.jpg" alt="Edge Alignment, No Cropping - Lady">
+            <div class="displacement">Displacement (G, R): (56, -8), (224, -24)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/lady.jpg" alt="Edge Alignment, Cropping - Lady">
+            <div class="displacement">Displacement (G, R): (-8, -8), (32, -24)</div> 
+        </div>
+    </div>
+
+
+    <div class="image-container">
+        <!-- icon -->
+        <div class="phase-box">
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/icon.jpg" alt="No Edge Alignment, No Cropping - Icon">
+            <div class="displacement">Displacement (G, R): (40, 16), (88, 24)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/icon.jpg" alt="Edge Alignment, No Cropping - Icon">
+            <div class="displacement">Displacement (G, R): (40, 16), (80, 24)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/icon.jpg" alt="Edge Alignment, Cropping - Icon">
+            <div class="displacement">Displacement (G, R): (16, 16), (32, 24)</div> 
+        </div>
+    </div>
+
+    <div class="image-container">
+        <!-- harvesters -->
+        <div class="phase-box">
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/harvesters.jpg" alt="No Edge Alignment, No Cropping - Harvesters">
+            <div class="displacement">Displacement (G, R): (120, 0), (120, 8)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/harvesters.jpg" alt="Edge Alignment, No Cropping - Harvesters">
+            <div class="displacement">Displacement (G, R): (64, 16), (128, 8)</div>
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/harvesters.jpg" alt="Edge Alignment, Cropping - Harvesters">
+            <div class="displacement">Displacement (G, R): (8, 16), (8, 16)</div> 
+        </div>
+    </div>
+
+    <div class="image-container">
+        <!-- emir -->
+        <div class="phase-box">
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/emir.jpg" alt="No Edge Alignment, No Cropping - Emir">
+            <div class="displacement">Displacement (G, R): (0, 8), (104, 16)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/emir.jpg" alt="Edge Alignment, No Cropping - Emir">
+            <div class="displacement">Displacement (G, R): (48, 24), (104, 40)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/emir.jpg" alt="Edge Alignment, Cropping - Emir">
+            <div class="displacement">Displacement (G, R): (-16, 24), (-16, 40)</div> 
+        </div>
+    </div>
+
+    <div class="image-container">
+        <!-- church -->
+        <div class="phase-box">
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/church.jpg" alt="No Edge Alignment, No Cropping - Church">
+            <div class="displacement">Displacement (G, R): (0, -8), (48, -8)</div> 
+        </div>
+        <div class="phase-box">
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/church.jpg" alt="Edge Alignment, No Cropping - Church">
+            <div class="displacement">Displacement (G, R): (24, 0), (56, -8)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/church.jpg" alt="Edge Alignment, Cropping - Church">
+            <div class="displacement">Displacement (G, R): (-8, 0), (-8, -8)</div>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <!-- cathedral -->
+        <div class="phase-box">
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/cathedral.jpg" alt="No Edge Alignment, No Cropping - Cathedral">
+            <div class="displacement">Displacement (G, R): (1, -1), (7, -1)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/cathedral.jpg" alt="Edge Alignment, No Cropping - Cathedral">
+            <div class="displacement">Displacement (G, R): (48, 24), (104, 40)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/cathedral.jpg" alt="Edge Alignment, Cropping - Cathedral">
+            <div class="displacement">Displacement (G, R): (0, 2), (2, 3)</div> 
+        </div>
+    </div>
+
+
+    <div class="image-container">
+        <!-- img1 -->
+        <div class="phase-box">
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/my1.jpg" alt="No Edge Alignment, No Cropping - My Image 1">
+            <div class="displacement">Displacement (G, R): (-8, 0), (96, 0)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/my1.jpg" alt="Edge Alignment, No Cropping - My Image 1">
+            <div class="displacement">Displacement (G, R): (32, 0), (80, 8)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/my1.jpg" alt="Edge Alignment, Cropping - My Image 1">
+            <div class="displacement">Displacement (G, R): (-24, 0), (-40, 8)</div> 
+        </div>
+    </div>
+
+    <div class="image-container">
+        <!-- img2 -->
+        <div class="phase-box">
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/my2.jpg" alt="No Edge Alignment, No Cropping - My Image 2">
+            <div class="displacement">Displacement (G, R): (48, 0), (96, -8)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/my2.jpg" alt="Edge Alignment, No Cropping - My Image 2">
+            <div class="displacement">Displacement (G, R): (48, 16), (96, 24)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/my2.jpg" alt="Edge Alignment, Cropping - My Image 2">
+            <div class="displacement">Displacement (G, R): (-16, 16), (-24, 24)</div> 
+        </div>
+    </div>
+
+    <div class="image-container">
+        <!-- img3 -->
+        <div class="phase-box">
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/my3.jpg" alt="No Edge Alignment, No Cropping - My Image 3">
+            <div class="displacement">Displacement (G, R): (40, 0), (96, 8)</div> 
+        </div>
+
+        <div class="phase-box">
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/my3.jpg" alt="Edge Alignment, No Cropping - My Image 3">
+            <div class="displacement">Displacement (G, R): (32, 0), (96, 8)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/my3.jpg" alt="Edge Alignment, Cropping - My Image 3">
+            <div class="displacement">Displacement (G, R): (32, 0), (96, 8)</div> 
+        </div>
+    </div>
+
+    <div class="image-container">
+        <!-- img4 -->
+        <div class="phase-box">
+            <h3>No Edge Alignment, No Cropping</h3>
+            <img src="media/naive/my4.jpg" alt="No Edge Alignment, No Cropping - My Image 4">
+            <div class="displacement">Displacement (G, R): (128, -8), (104, -16)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, No Cropping</h3>
+            <img src="media/edge/my4.jpg" alt="Edge Alignment, No Cropping - My Image 4">
+            <div class="displacement">Displacement (G, R): (32, -8), (104, -16)</div> 
+        </div>
+        
+        <div class="phase-box">
+            <h3>Edge Alignment, Cropping</h3>
+            <img src="media/final/my4.jpg" alt="Edge Alignment, Cropping - My Image 4">
+            <div class="displacement">Displacement (G, R): (-32, -8), (-16, -16)</div> 
         </div>
     </div>
 </section>
 
+
 </body>
 </html>
-
-
-
-
-
