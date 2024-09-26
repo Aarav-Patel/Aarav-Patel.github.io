@@ -415,14 +415,125 @@
             <img src="media/2p1/blursharp/cat/Unknown-4.png" alt="BGrad cameraman 1 ">
         </div>
     </div>
-
-
 </section>
 
 
 <section id="2.2: Hybrid Images">
     <h2>2.2: Hybrid Images</h2>
-    <p>The Sobel Filter is a standard method for edge detection in images. It works by computing the gradient of an image at each pixel by sliding a filter (3x3 kernel) over the picture in the x and y directions. Any magnitude of the gradient below a certain threshold is eliminated from the alignment map. The alignment map for each channel is used to guide the alignment of the image instead of the raw pixels. </p>
+    <p>To create a hybrid image, I first aligned the images using 2 manually selected points from each image. Then, I applied a low-pass filter to one image and a high-pass filter to the other image. I used the standard 2D Gaussian filter for the low-pass filter and subtracted the Gaussian-filtered image from the original for a high-pass filter. I then experimented to determine the best cut-off frequency for each hybrid image I created.</p>
+    
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Image (Low Frequency)</h3>
+            <img src="media/2p2/given/cat.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>Original Image (High Frequency)</h3>
+            <img src="media/2p2/given/dude.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Hybrid Image</h3>
+            <img src="media/2p2/given/hybrid.png" alt="dy cameraman 1">
+
+        </div>
+    </div>
+
+    <p>I then created a hybrid image from two images of myself in my room at two different positions.</p>
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Image (Low Frequency)</h3>
+            <img src="media/2p2/last/state1.jpg" alt="OG Cameraman">
+        </div>
+    </div>
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Image (High Frequency)</h3>
+            <img src="media/2p2/last/state2.jpg" alt="dx cameraman 1">
+
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Hybrid Image</h3>
+            <img src="media/2p2/last/hybrid_3.png" alt="dy cameraman 1">
+
+        </div>
+    </div>
+    <p>I then created a hybrid image out of a man who is happy in high frequency and unhappy in low frequency.</p>
+    
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Image (Low Frequency)</h3>
+            <img src="media/2p2/happysad/sad.jpg" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>Original Image (High Frequency)</h3>
+            <img src="media/2p2/happysad/happy.jpg" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Hybrid Image</h3>
+            <img src="media/2p2/happysad/hybrid.png" alt="dy cameraman 1">
+        </div>
+    </div>
+
+
+    <p>For my best result (the happy/unhappy man), I also completed the process through frequency analysis. Below, I show the log magnitude of the Fourier transform for the original unhappy man, the original happy man, the low-pass filtered unhappy man, the high-pass filtered happy man, and the hybrid image, respectively.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Image (Low Frequency)</h3>
+            <img src="media/2p2/happysad/low_freq_sad_og.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>Original Image (High Frequency)</h3>
+            <img src="media/2p2/happysad/high_freq_happy_og.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Low-Pass Filter</h3>
+            <img src="media/2p2/happysad/low_filter.png" alt="dy cameraman 1">
+        </div>
+
+        <div class="phase-box">
+            <h3>High-Pass Filter</h3>
+            <img src="media/2p2/happysad/high_filter.png" alt="dy cameraman 1">
+        </div>
+
+        <div class="phase-box">
+            <h3>Hybrid Image</h3>
+            <img src="media/2p2/happysad/hybrid_filter.png" alt="dy cameraman 1">
+        </div>
+    </div>
+
+    <p>Here is a failed attempt to create a hybrid image out of Tony Stark and Steve Rogers.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Image (Low Frequency)</h3>
+            <img src="media/2p2/starkcap/stark.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>Original Image (High Frequency)</h3>
+            <img src="media/2p2/starkcap/cap.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Hybrid Image</h3>
+            <img src="media/2p2/starkcap/failure.png" alt="dy cameraman 1">
+        </div>
+    </div>
+
 </section>
 
 
