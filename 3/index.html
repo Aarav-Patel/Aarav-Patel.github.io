@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cs180</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #007acc;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        section {
+            padding: 20px;
+            margin: 20px auto;
+            background-color: white;
+            max-width: 1000px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #007acc;
+        }
+        a {
+            color: #646b6e;
+            text-decoration: none; 
+        }
+
+
+        a:visited {
+            color: #646b6e; 
+        }
+
+
+        a:hover {
+            color: #ff6600; 
+        }
+
+
+        a:active {
+            color: #ff0000; 
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+        }
+    </style>
+    <title>Image Alignment Phases</title>
+    <style>
+        .image-container {
+            display: flex; 
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+
+        .phase-box {
+            text-align: center;
+            margin: 0 10px;
+        }
+
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+
+        .displacement {
+            font-size: 12px;
+            margin-top: 5px;
+            color: #333;
+        }
+
+        h3 {
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>CS 180 Project 2 –– Fun with Filters and Frequencies!</h1>
+    <p><b>Aarav Patel</b></p>
+</header>
+
+
+<section id="overview">
+    <h2>Overview</h2>
+    <p>Project 2 is an exploration of the following: 1) analyzing edges by computing image gradient, 2) sharpening images by accentuating high frequencies (subtracting image blurred with Gaussian), 3) creating hybrid images using low and high frequency filters on two images, 4) multi-resolution blending.</p>
+</section>
+
+
+<section id="1.1: Finite Difference Operator">
+    <h2>1.1: Finite Difference Operator</h2>
+    <p>I first computed the partial derivatives with respect to x [1, -1] and y ([1], [-1]) of the cameraman image through convolution with the respective finite difference operators. I arrived at the gradient magnitude image by calculating the Euclidean Norm of the resulting partial derivative images. Finally, comparing the gradient magnitude with an empirically determined threshold results in a binarized gradient magnitude. The threshold is a scalar multiplier representing how many standard deviations above the mean of gradient magntiude should be.</p>
+
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Orginal Cameraman Image</h3>
+            <img src="media/1p1/cameraman_orginal_1.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>Partial Derivative w.r.t. x</h3>
+            <img src="media/1p1/dx_cameraman_1.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Partial Derivative w.r.t. y</h3>
+            <img src="media/1p1/dy_cameraman_1.png" alt="dy cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Gradient Magnitude</h3>
+            <img src="media/1p1/gradient_cameraman_1.png" alt="grad cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Binarized Gradient Magnitude</h3>
+            <img src="media/1p1/b_gradient_camerman_1.png" alt="BGrad cameraman 1 ">
+
+        </div>
+    </div>
+
+
+</section>
+
+
+<section id="1.2: Derivative of Gaussian Filter">
+    <h2>1.2: Derivative of Gaussian (DoG) Filter</h2>
+    <p>I first created a 2D Gaussian filter by taking the outer product of a 1D Gaussian with its transpose. I blurred the original cameraman image with this 2D Gaussian. I then repeated the steps in part 1.1. The gradient magnitude image has less noise; thus, the binarized gradient magnitude image more clearly highlights the edges.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Blurred Cameraman Image</h3>
+            <img src="media/1p2/Unknown-6.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>Partial Derivative w.r.t. x</h3>
+            <img src="media/1p2/Unknown-7.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Partial Derivative w.r.t. y</h3>
+            <img src="media/1p2/Unknown-8.png" alt="dy cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Gradient Magnitude</h3>
+            <img src="media/1p2/Unknown-9.png" alt="grad cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Binarized Gradient Magnitude</h3>
+            <img src="media/1p2/Unknown-10.png" alt="BGrad cameraman 1 ">
+
+        </div>
+    </div>
+
+    <p>Now, instead of convolving the image with the 2D Gaussian and subsequently convolving with the finite difference operators, I first convolved the 2D Gaussian with the finite difference operators. This resulted in the Derivative of Gaussian (DoG) Filter. As you can see, there is no difference between the two processes as convolution is commutative.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>DoG Filters</h3>
+            <img src="media/1p2/Unknown.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>Partial Derivative w.r.t. x</h3>
+            <img src="media/1p2/Unknown-2.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Partial Derivative w.r.t. y</h3>
+            <img src="media/1p2/Unknown-3.png" alt="dy cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Gradient Magnitude</h3>
+            <img src="media/1p2/Unknown-4.png" alt="grad cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Binarized Gradient Magnitude</h3>
+            <img src="media/1p2/Unknown-5.png" alt="BGrad cameraman 1 ">
+
+        </div>
+    </div>
+
+
+</section>
+
+
+<section id="2.1: Image Sharpening">
+    <h2>2.1: Image Sharpening</h2>
+    <p>To sharpen an image, I first blurred the image with a Gaussian and subtracted that from the original image. Blurring an image with a Gaussian filter filters out high frequencies, which is effectively a low-pass filter. Thus, subtracting the blurred image from the original image leaves the higher frequencies. Therefore, adding this result multiplied by a scalar to the original image sharpens it–– a larger scalar results in a sharper image. I repeated this process for each channel for color images and recombined them at the end.</p>
+    
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Image</h3>
+            <img src="media/2p1/taj.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>R Channel</h3>
+            <img src="media/2p1/Unknown.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>R Channel Blurred</h3>
+            <img src="media/2p1/Unknown-2.png" alt="dy cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>R Channel Sharpened</h3>
+            <img src="media/2p1/Unknown-3.png" alt="grad cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Recombined Sharpened Image</h3>
+            <img src="media/2p1/Unknown-4.png" alt="BGrad cameraman 1 ">
+        </div>
+    </div>
+
+
+
+    <p>Now, I compress the sharpening process using the Unsharp Mask Filter, which performs a single convolution. I used the following derivation shown in lecture:</p>
+    <center>
+        <p>&#402; + &#593;(&#402; - &#402;&#8727;g) = (1 + &#593;)&#402; - &#593;&#402;&#8727;g = &#402;&#8727;((1 + &#593;)e - &#593;g))</p>
+    </center>
+    <p>Here, &#402; is the image, g is the Gaussian filter, &#593; is the scalar multiplier of the high-frequencies, and e is the unit impulse (a matrix that is 0 everywhere except it's 1 at the center and has the exact dimensions as the Gaussian filter in use). As you can see, there is no difference between the processes.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Image</h3>
+            <img src="media/2p1/taj.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>R Channel</h3>
+            <img src="media/2p1/Unknown-5.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3></h3>
+            <img src="media/2p1/white.png" alt="dx cameraman 1">
+        </div>
+        
+
+        <div class="phase-box">
+            <h3>R Channel Sharpened</h3>
+            <img src="media/2p1/Unknown-6.png" alt="grad cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Recombined Sharpened Image</h3>
+            <img src="media/2p1/Unknown-7.png" alt="BGrad cameraman 1 ">
+        </div>
+    </div>
+
+
+    <p>I've now sharpened some other examples here.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Image</h3>
+            <img src="media/2p1/ironman_og.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>R Channel</h3>
+            <img src="media/2p1/ironmancap/Unknown.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>R Channel Sharpened</h3>
+            <img src="media/2p1/ironmancap/Unknown-2.png" alt="grad cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Recombined Sharpened Image</h3>
+            <img src="media/2p1/ironmancap/Unknown-3.png" alt="BGrad cameraman 1 ">
+        </div>
+    </div>
+
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Image</h3>
+            <img src="media/2p1/cap_og.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>R Channel</h3>
+            <img src="media/2p1/ironmancap/Unknown-4.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>R Channel Sharpened</h3>
+            <img src="media/2p1/ironmancap/Unknown-5.png" alt="grad cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Recombined Sharpened Image</h3>
+            <img src="media/2p1/ironmancap/Unknown-6.png" alt="BGrad cameraman 1 ">
+        </div>
+    </div>
+
+
+    <p>Now, I take sharp images, blur them, then attempt to sharpen them again. As you can see, these attempts were unsuccessful. This is because the initial blurring resulted in information loss.</p>
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Sharpened Image</h3>
+            <img src="media/2p1/blursharp/Unknown.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>Blurred R Channel</h3>
+            <img src="media/2p1/blursharp/Unknown-2.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>R Channel Resharpened</h3>
+            <img src="media/2p1/blursharp/Unknown-3.png" alt="grad cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Recombined Resharpened Image</h3>
+            <img src="media/2p1/blursharp/Unknown-4.png" alt="BGrad cameraman 1 ">
+        </div>
+    </div>
+
+    <p>I first show what an already sharp image looks like when sharpened. Then, I take the sharp image, blur it, and then attempt to sharpen it again. As you can see, this attempt was also unsuccessful.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Sharp Image</h3>
+            <img src="media/2p1/blursharp/cat/cat2/Unknown.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>R Channel</h3>
+            <img src="media/2p1/blursharp/cat/cat2/Unknown-2.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>R Channel Sharpened</h3>
+            <img src="media/2p1/blursharp/cat/cat2/Unknown-3.png" alt="grad cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Recombined Sharpened Image</h3>
+            <img src="media/2p1/blursharp/cat/cat2/Unknown-4.png" alt="BGrad cameraman 1 ">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Sharp Image</h3>
+            <img src="media/2p1/blursharp/cat/Unknown.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>Blurred R Channel</h3>
+            <img src="media/2p1/blursharp/cat/Unknown-2.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>R Channel Resharpened</h3>
+            <img src="media/2p1/blursharp/cat/Unknown-3.png" alt="grad cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Recombined Resharpened Image</h3>
+            <img src="media/2p1/blursharp/cat/Unknown-4.png" alt="BGrad cameraman 1 ">
+        </div>
+    </div>
+</section>
+
+
+<section id="2.2: Hybrid Images">
+    <h2>2.2: Hybrid Images</h2>
+    <p>To create a hybrid image, I first aligned the images using 2 manually selected points from each image. Then, I applied a low-pass filter to one image and a high-pass filter to the other image. I used the standard 2D Gaussian filter for the low-pass filter and subtracted the Gaussian-filtered image from the original for a high-pass filter. I then experimented to determine the best cut-off frequency for each hybrid image I created.</p>
+    
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Image (Low Frequency)</h3>
+            <img src="media/2p2/given/cat.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>Original Image (High Frequency)</h3>
+            <img src="media/2p2/given/dude.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Hybrid Image</h3>
+            <img src="media/2p2/given/hybrid.png" alt="dy cameraman 1">
+
+        </div>
+    </div>
+
+    <p>I then created a hybrid image from two images of myself in my room at two different positions.</p>
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Image (Low Frequency)</h3>
+            <img src="media/2p2/last/state1.jpg" alt="OG Cameraman">
+        </div>
+    </div>
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Image (High Frequency)</h3>
+            <img src="media/2p2/last/state2.jpg" alt="dx cameraman 1">
+
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Hybrid Image</h3>
+            <img src="media/2p2/last/hybrid_3.png" alt="dy cameraman 1">
+
+        </div>
+    </div>
+    <p>I then created a hybrid image out of a man who is happy in high frequency and unhappy in low frequency.</p>
+    
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Image (Low Frequency)</h3>
+            <img src="media/2p2/happysad/sad.jpg" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>Original Image (High Frequency)</h3>
+            <img src="media/2p2/happysad/happy.jpg" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Hybrid Image</h3>
+            <img src="media/2p2/happysad/hybrid.png" alt="dy cameraman 1">
+        </div>
+    </div>
+
+
+    <p>For my best result (the happy/unhappy man), I also completed the process through frequency analysis. Below, I show the log magnitude of the Fourier transform for the original unhappy man, the original happy man, the low-pass filtered unhappy man, the high-pass filtered happy man, and the hybrid image, respectively.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Image (Low Frequency)</h3>
+            <img src="media/2p2/happysad/low_freq_sad_og.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>Original Image (High Frequency)</h3>
+            <img src="media/2p2/happysad/high_freq_happy_og.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Low-Pass Filter</h3>
+            <img src="media/2p2/happysad/low_filter.png" alt="dy cameraman 1">
+        </div>
+
+        <div class="phase-box">
+            <h3>High-Pass Filter</h3>
+            <img src="media/2p2/happysad/high_filter.png" alt="dy cameraman 1">
+        </div>
+
+        <div class="phase-box">
+            <h3>Hybrid Image</h3>
+            <img src="media/2p2/happysad/hybrid_filter.png" alt="dy cameraman 1">
+        </div>
+    </div>
+
+    <p>Here is a failed attempt to create a hybrid image out of Tony Stark and Steve Rogers.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Image (Low Frequency)</h3>
+            <img src="media/2p2/starkcap/stark.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>Original Image (High Frequency)</h3>
+            <img src="media/2p2/starkcap/cap.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Hybrid Image</h3>
+            <img src="media/2p2/starkcap/failure.png" alt="dy cameraman 1">
+        </div>
+    </div>
+
+</section>
+
+
+<section id="2.3: Gaussian and Laplacian Stacks">
+    <h2>2.3: Gaussian and Laplacian Stacks</h2>
+    <p>Here, I've reconstructed Figure 3.42 in the Szelski textbook using Gaussian and Laplacian stacks. I first constructed a Gaussian stack for the Oraple. Using that Gaussian stack, I constructed the Laplacian stacks for the right and left sides of the image. I then constructed the Gaussian stack for my mask. Next, I computed the weighted average of the mask and Laplacian for each image at each level. I then compressed the result down into the final image. I repeated this for each color channel, stacking them at the end.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/2p3/Unknown.png" alt="OG Cameraman">
+        </div>
+    </div>
+
+</section>
+
+
+<section id="2.4: Multiresolution Blending">
+    <h2>2.4: Multiresolution Blending</h2>
+    <p>I first attempted to reconstruct the Oraple using the given images of an apple and an orange. Then, I attempted to blend the Berkeley and Stanford campuses. Lastly, I attempted to blend myself into Ironman using an irregular mask.</p>
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/2p4/final.png" alt="OG Cameraman">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Berkeley Image</h3>
+            <img src="media/2p4/berk.jpg" alt="OG Cameraman">
+        </div>
+    </div>
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Stanford Image</h3>
+            <img src="media/2p4/stanford.jpg" alt="OG Cameraman">
+        </div>
+    </div>
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Blended Campus Image</h3>
+            <img src="media/2p4/berkstanres.png" alt="OG Cameraman">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Original Image of Myself</h3>
+            <img src="media/2p4/rav.png" alt="OG Cameraman">
+        </div>
+        <div class="phase-box">
+            <h3>Original Ironman Image</h3>
+            <img src="media/2p4/ironman.jpg" alt="OG Cameraman">
+        </div>
+    </div>
+
+
+</section>
+
+
+</body>
+</html>
