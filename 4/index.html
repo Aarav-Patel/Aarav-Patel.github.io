@@ -302,63 +302,82 @@
         </div>
     </div>
 
+    <p>I then applied Adaptive Non-Maximal Supression to filter the number of points and ensure they are uniformly distributed over the image.</p>
+
 </section>
 
 <section id="4B: Extracting a Feature Descriptor for each feature point">
     <h2>4B: Extracting a Feature Descriptor for each feature point</h2>
-    <p>Here, I used the Harris Interest Point Detector to detect the corner points in each image of each set. Here are my results.</p>
+    <p>In this part, I extracted a feature descriptor for each feature point that was left after Adaptive Non-Maximal Supression. This is done by first observing a 40x40 window and then sampling an 8x8 feature descriptor.</p>
+</section>
 
+<section id="4B: Matching these feature descriptors between two images">
+    <h2>4B: Matching these feature descriptors between two images</h2>
+    <p>Here, I implemented feature matching between the descriptors of two images by thresholding on a Lowe's ratio of 0.6. Here are the potential matches. Please note that there are still some outliers–– which will be dealt with by RANSAC in the next part.</p>
     <div class="image-container">
         <div class="phase-box">
-            <h3>Living Room #1, Harris Interest Points</h3>
-            <img src="media/mos1B/harris/Unknown-7.png" alt="dx cameraman 1">
+            <h3>Living Room, Potential Matches</h3>
+            <img src="media/mos1B/matching/Unknown-5.png" alt="dx cameraman 1">
 
-        </div>
-        <div class="phase-box">
-            <h3>Living Room #2, Harris Interest Points</h3>
-            <img src="media/mos1B/harris/Unknown-6.png" alt="dx cameraman 1">
-
-        </div>
-
-        <div class="phase-box">
-            <h3>Living Room #3, Harris Interest Points</h3>
-            <img src="media/mos1B/harris/Unknown-5.png" alt="dx cameraman 1">
         </div>
     </div>
 
     <div class="image-container">
         <div class="phase-box">
-            <h3>Balcony View #1, Harris Interest Points</h3>
-            <img src="media/mos2B/harris/Unknown-5.png" alt="dx cameraman 1">
+            <h3>Balcony View, Potential Matches</h3>
+            <img src="media/mos2B/matching/Unknown-5.png" alt="dx cameraman 1">
 
-        </div>
-        <div class="phase-box">
-            <h3>Balcony View #2, Harris Interest Points</h3>
-            <img src="media/mos2B/harris/Unknown-6.png" alt="dx cameraman 1">
-
-        </div>
-
-        <div class="phase-box">
-            <h3>Balcony View #3, Harris Interest Points</h3>
-            <img src="media/mos2B/harris/Unknown-7.png" alt="dx cameraman 1">
         </div>
     </div>
 
     <div class="image-container">
         <div class="phase-box">
-            <h3>Kitchen #1, Harris Interest Points</h3>
-            <img src="media/mos3B/harris/Unknown-5.png" alt="dx cameraman 1">
+            <h3>Kitchen, Potential Matches</h3>
+            <img src="media/mos3B/matching/Unknown-5.png" alt="dx cameraman 1">
+        </div>
+    </div>
+
+</section>
+
+<section id="4B: Use a robust method (RANSAC) to compute a homography">
+    <h2>4B: Use a robust method (RANSAC) to compute a homography</h2>
+    <p>Here I implemented 4-point RANSAC as described in class to compute the most likely homography. I then blended the image sets to form mosaics and comapred to the results from Project 4A.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Living Room, 4A, Manual</h3>
+            <img src="media/mos1A/res.png" alt="dx cameraman 1">
 
         </div>
         <div class="phase-box">
-            <h3>Kitchen #2, Harris Interest Points</h3>
-            <img src="media/mos3B/harris/Unknown-6.png" alt="dx cameraman 1">
+            <h3>Living Room, 4B, Automatic</h3>
+            <img src="media/mos1B/result/Unknown-5.png" alt="dx cameraman 1">
 
         </div>
+    </div>
 
+    <div class="image-container">
         <div class="phase-box">
-            <h3>Kitchen #3, Harris Interest Points</h3>
-            <img src="media/mos3B/harris/Unknown-7.png" alt="dx cameraman 1">
+            <h3>Balcony View, 4A, Manual</h3>
+            <img src="media/mos2A/Unknown-5.png" alt="dx cameraman 1">
+
+        </div>
+        <div class="phase-box">
+            <h3>Balcony View, 4B, Automatic</h3>
+            <img src="media/mos2B/result/Unknown-5.png" alt="dx cameraman 1">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Kitchen, 4A, Manual</h3>
+            <img src="media/mos3A/Unknown-5.png" alt="dx cameraman 1">
+
+        </div>
+        <div class="phase-box">
+            <h3>Kitchen, 4B, Automatic</h3>
+            <img src="media/mos3B/result/Unknown-5.png" alt="dx cameraman 1">
+
         </div>
     </div>
 
