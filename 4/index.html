@@ -117,268 +117,252 @@
 <body>
 
 <header>
-    <h1>CS 180 Project 3 –– Face Morphing</h1>
+    <h1>CS 180 Project 4 –– [Auto]Stitching Photo Mosaics</h1>
     <p><b>Aarav Patel</b></p>
 </header>
 
 
 <section id="overview">
     <h2>Overview</h2>
-    <p>Project 3 is an exploration of the following: 1) defining good points of correspondence between two faces (based on primary features like eyes, nose, mouth, etc.), 2) computing facial geometries (Delaunay triangulation), 3) warping faces into different geometries, 4) creating smooth morph seqeunces, 5) computing the mean face of a population, and 6) extrapolating from the mean face of a population to create caricatures.</p>
+    <p>In Project 4A, we explore image warping and moasicing. Specifically, we shoot and digitize pictures, recover homographies, warp the images, and finally blend them into a mosaic. In Project 4B, we explore feature matching and autostitching. Specifically, we automatically detect corner features in an image, extract a feature descriptor for each feature point, match the feature descriptors between two images, use RANSAC to compute a homography, and finally blend the images into a mosaic similar to Project 4A.</p>
 </section>
 
+<section id="4A: Shooting and Digitizing Images">
+    <h2>4A: Shooting and Digitizing Images</h2>
+    <p>I choose 3 sets of images: 1) my living room at home, 2) the view from my balcony in Berkeley, 3) my kitchen at home.</p>
 
-<section id="Part 1">
-    <h2>Part 1. Defining Correspondences</h2>
-    <p>I decided to morph my little brother's (Ayan) face into my (Aarav) face. I first had to label points in both images to define the correspondence.</p>
+
     <div class="image-container">
         <div class="phase-box">
-            <h3>Ayan</h3>
-            <img src="media/1/ayan.png" alt="OG Cameraman">
+            <h3>Living Room #1</h3>
+            <img src="media/mos1B/og/lv3.jpeg" alt="OG Cameraman">
         </div>
         
         <div class="phase-box">
-            <h3>Aarav</h3>
-            <img src="media/1/aarav.png" alt="dx cameraman 1">
+            <h3>Living Room #2</h3>
+            <img src="media/mos1B/og/lv2.jpeg" alt="dx cameraman 1">
+        </div>
 
+        <div class="phase-box">
+            <h3>Living Room #3</h3>
+            <img src="media/mos1B/og/lv1.jpeg" alt="OG Cameraman">
         </div>
     </div>
 
     <div class="image-container">
         <div class="phase-box">
-            <h3>Annotated Ayan</h3>
-            <img src="media/1/ayanCorr.png" alt="OG Cameraman">
+            <h3>Balcony View #1</h3>
+            <img src="media/mos2B/og/front_1.jpeg" alt="OG Cameraman">
         </div>
         
         <div class="phase-box">
-            <h3>Annotated Aarav</h3>
-            <img src="media/1/aaravCorr.png" alt="dx cameraman 1">
+            <h3>Balcony View #2</h3>
+            <img src="media/mos2B/og/front_2.jpeg" alt="dx cameraman 1">
+        </div>
+
+        <div class="phase-box">
+            <h3>Balcony View #3</h3>
+            <img src="media/mos2B/og/front_3.jpeg" alt="dx cameraman 1">
         </div>
     </div>
 
-    <p>I then averaged the defined points in both images to arrive at a mean correspondence. I subsequently used Delaunay triangulation to define the mean geometry.</p>
-
     <div class="image-container">
         <div class="phase-box">
-            <h3>Ayan with Mean Triangulation Map</h3>
-            <img src="media/1/ayanmean.png" alt="OG Cameraman">
+            <h3>Kitchen #1</h3>
+            <img src="media/mos3B/og/kitch1.jpeg" alt="OG Cameraman">
         </div>
         
         <div class="phase-box">
-            <h3>Aarav with Mean Triangulation Map</h3>
-            <img src="media/1/aaravmean.png" alt="dx cameraman 1">
-        </div>
-    </div>
-
-</section>
-
-
-<section id="Part 2. Computing the Mid-way Face">
-    <h2>Part 2. Computing the "Mid-way Face"</h2>
-    <p>I first wrote the computeAffine function to generate the affine transformation matrix that maps the target geometry (in this case, the mean geometry) to the source geometry. Then, for each of the input images (Ayan and Aarav), I warped its geometry to the mean geometry. I achieved this using the following method: 1) I created a polygon mask for each of the triangles in the mean geometry, 2) I computed the affine transformation matrix to map the triangles from the mean geometry to the source geometry, 3) I applied this transformation to sample from the corresponding location in the source image, 4) I cast the coordinates to integers as this yielded efficient and sufficient results (and was approved by course staff on EdDiscussion). After generating images of Ayan and Aarav with the mean geometry, I averaged them to get the mid-way image.</p>
-
-    <div class="image-container">
-        <div class="phase-box">
-            <h3>Ayan with Mean Geometry</h3>
-            <img src="media/2/ayan_mean.png" alt="OG Cameraman">
+            <h3>Kitchen #2</h3>
+            <img src="media/mos3B/og/kitch2.jpeg" alt="dx cameraman 1">
         </div>
 
         <div class="phase-box">
-            <h3>Aarav with Mean Geometry</h3>
-            <img src="media/2/aarav_mean.png" alt="OG Cameraman">
+            <h3>Kitchen #3</h3>
+            <img src="media/mos3B/og/kitch3.jpeg" alt="dx cameraman 1">
         </div>
-        <div class="phase-box">
-            <h3>Mid-way Image</h3>
-            <img src="media/2/midway.png" alt="OG Cameraman">
-        </div>
-
     </div>
 </section>
 
 
-<section id="Part 3. The Morph Sequence">
-    <h2>Part 3. The Morph Sequence</h2>
-    <p>Here, I generated a .gif of a morph sequence with 90 frames at 30 fps. Each frame is a differently weighted average, starting with the original image of Ayan and ending with the original image of Aarav. The .gif cannot be viewed on page.pdf–– please use the site to view it.</p>
+<section id="4A: Recovering Homographies">
+    <h2>4A: Recovering Homographies</h2>
+    <p>In order to recover the homography matrix H between two images, I had to define the correspondence points. For this task, I used the tool provided in Project 3. For our system, we only required 4 points to solve through least-squares. However, I used 8 points to yield an over-determined system and protect against instability. I solved the least-squares problem using SVD. I then normalized the solution and returned H.</p>
+</section>
 
-    <div>
-        <img id="gif" src="media/3/morph_sequence.gif" alt="Morph gif">
 
-        <button onclick="resetGif()">Reset</button>
-    
-        <script>
-            function resetGif() {
-            var gif = document.getElementById("gif");
-            gif.src = gif.src; 
-            }
-        </script>
+<section id="4A: Warping the Images">
+    <h2>4A: Warping the Images</h2>
+    <p>In this part, I wrote the image warping function. It first determines the new image corner positions, then calculates the bounding box of the warped image, and finally uses inverse warping to map pixels from the warped image back to the original space. Below, I've applied my warp function for rectification. In the first case, I'm rotating my laptop screen towards the viewer. In the second case, I'm rotating the "I love CS 180" sign on my desk so it is readable by the viewer.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Orignal</h3>
+            <img src="media/Rect/1/before.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>Rectified</h3>
+            <img src="media/Rect/1/after.png" alt="dx cameraman 1">
+        </div>
     </div>
 
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Orignal</h3>
+            <img src="media/Rect/2/before.png" alt="OG Cameraman">
+        </div>
+        
+        <div class="phase-box">
+            <h3>Rectified</h3>
+            <img src="media/Rect/2/after.png" alt="dx cameraman 1">
+        </div>
+    </div>
     </section>
 
 
-<section id="Part 4. The Mean face of a population">
-    <h2>Part 4. The "Mean face" of a population</h2>
-    <p>For this part, I choose to use the IMM Face Database ("Dane dataset"). I first parsed all the .asf files and computed the average correspondence for males, females, and both together. I then computed the average geometry for each of these groups. I then warped all the males to the average male Dane shape, all the females to the average female Dane shape, and finally the entire dataset into the average Dane shape. Note that there were far more male samples in the dataset, thus the average shape for the dataset skews towards the average male Dane shape. </p>
+<section id="4A: Blending">
+    <h2>4A: Blending</h2>
+    <p>In this part, I warped and then blended the images in every set to create a mosaic with the manual correspondences. Here are my results.</p>
 
     <div class="image-container">
         <div class="phase-box">
-            <h3>Original Male Dane</h3>
-            <img src="media/4/male1.png" alt="OG Cameraman">
+            <h3>Living Room Result, Manual</h3>
+            <img src="media/mos1B/result/Unknown-5.png" alt="OG Cameraman">
         </div>
         
         <div class="phase-box">
-            <h3>Male Dane Warped into Average Male Dane Shape</h3>
-            <img src="media/4/male1male.png" alt="dx cameraman 1">
+            <h3>Balcony View Result, Manual</h3>
+            <img src="media/mos2B/result/Unknown-5.png" alt="dx cameraman 1">
 
         </div>
         <div class="phase-box">
-            <h3>Male Dane Warped into Average Dane Shape</h3>
-            <img src="media/4/male1average.png" alt="dx cameraman 1">
-
-        </div>
-    </div>
-
-    <div class="image-container">
-        <div class="phase-box">
-            <h3>Original Male Dane</h3>
-            <img src="media/4/male2.png" alt="OG Cameraman">
-        </div>
-        
-        <div class="phase-box">
-            <h3>Male Dane Warped into Average Male Dane Shape</h3>
-            <img src="media/4/male2male.png" alt="dx cameraman 1">
-
-        </div>
-        <div class="phase-box">
-            <h3>Male Dane Warped into Average Dane Shape</h3>
-            <img src="media/4/male2average.png" alt="dx cameraman 1">
-
-        </div>
-    </div>
-
-    <div class="image-container">
-        <div class="phase-box">
-            <h3>Original Female Dane</h3>
-            <img src="media/4/female1.png" alt="OG Cameraman">
-        </div>
-        
-        <div class="phase-box">
-            <h3>Female Dane Warped into Average Female Dane Shape</h3>
-            <img src="media/4/female1female.png" alt="dx cameraman 1">
-
-        </div>
-        <div class="phase-box">
-            <h3>Female Dane Warped into Average Dane Shape</h3>
-            <img src="media/4/female1average.png" alt="dx cameraman 1">
-
-        </div>
-    </div>
-
-    <div class="image-container">
-        <div class="phase-box">
-            <h3>Original Female Dane</h3>
-            <img src="media/4/female2.png" alt="OG Cameraman">
-        </div>
-        
-        <div class="phase-box">
-            <h3>Female Dane Warped into Average Female Dane Shape</h3>
-            <img src="media/4/female2female.png" alt="dx cameraman 1">
-
-        </div>
-        <div class="phase-box">
-            <h3>Female Dane Warped into Average Dane Shape</h3>
-            <img src="media/4/female2average.png" alt="dx cameraman 1">
-
-        </div>
-    </div>
-
-
-    <p>I then averaged all the results from each group to arrive at the average male Dane face, average female Dane face, and average Dane face (which skews towards the average male Dane face due to dataset imbalance).</p>
-
-    <div class="image-container">
-        <div class="phase-box">
-            <h3>Average Dane Male Face</h3>
-            <img src="media/4/average_dane_male.png" alt="dx cameraman 1">
-
-        </div>
-        <div class="phase-box">
-            <h3>Average Dane Female Face</h3>
-            <img src="media/4/average_dane_female.png" alt="dx cameraman 1">
-
-        </div>
-        <div class="phase-box">
-            <h3>Average Dane Face (Skewed)</h3>
-            <img src="media/4/average_dane.png" alt="dx cameraman 1">
-
-        </div>
-    </div>
-
-    <p>I then warped my face into the average Dane face and vice versa.</p>
-
-    <div class="image-container">
-        <div class="phase-box">
-            <h3>Aarav Warped to Dane</h3>
-            <img src="media/4/aaravtodane.png" alt="dx cameraman 1">
-
-        </div>
-        <div class="phase-box">
-            <h3>Dane Warped to Aarav</h3>
-            <img src="media/4/danetoaarav.png" alt="dx cameraman 1">
-
+            <h3>Kitchen Result, Manual</h3>
+            <img src="media/mos3B/result/Unknown-5.png" alt="dx cameraman 1">
         </div>
     </div>
 </section>
 
 
-<section id="Part 5. Caricatures: Extrapolating from the mean">
-    <h2>Part 5. Caricatures: Extrapolating from the mean</h2>
-    <p>To create caricatures by extrapolating from the average Dane face, I set the warp_frac parameter of morph to 1.5 (exaggerate the average Dane's features) and -1.5 (exaggerate my features).</p>
+<section id="4B: Detecting corner features in an image">
+    <h2>4B: Detecting corner features in an image</h2>
+    <p>Here, I used the Harris Interest Point Detector to detect the corner points in each image of each set. Here are my results.</p>
 
     <div class="image-container">
         <div class="phase-box">
-            <h3>warp_frac = 1.5</h3>
-            <img src="media/5/more.png" alt="dx cameraman 1">
+            <h3>Living Room #1, Harris Interest Points</h3>
+            <img src="media/mos1B/harris/Unknown-7.png" alt="dx cameraman 1">
 
         </div>
         <div class="phase-box">
-            <h3>warp_frac = -1.5</h3>
-            <img src="media/5/less.png" alt="dx cameraman 1">
+            <h3>Living Room #2, Harris Interest Points</h3>
+            <img src="media/mos1B/harris/Unknown-6.png" alt="dx cameraman 1">
 
+        </div>
+
+        <div class="phase-box">
+            <h3>Living Room #3, Harris Interest Points</h3>
+            <img src="media/mos1B/harris/Unknown-5.png" alt="dx cameraman 1">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Balcony View #1, Harris Interest Points</h3>
+            <img src="media/mos2B/harris/Unknown-5.png" alt="dx cameraman 1">
+
+        </div>
+        <div class="phase-box">
+            <h3>Balcony View #2, Harris Interest Points</h3>
+            <img src="media/mos2B/harris/Unknown-6.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Balcony View #3, Harris Interest Points</h3>
+            <img src="media/mos2B/harris/Unknown-7.png" alt="dx cameraman 1">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Kitchen #1, Harris Interest Points</h3>
+            <img src="media/mos3B/harris/Unknown-5.png" alt="dx cameraman 1">
+
+        </div>
+        <div class="phase-box">
+            <h3>Kitchen #2, Harris Interest Points</h3>
+            <img src="media/mos3B/harris/Unknown-6.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Kitchen #3, Harris Interest Points</h3>
+            <img src="media/mos3B/harris/Unknown-7.png" alt="dx cameraman 1">
         </div>
     </div>
 
 </section>
 
-<section id="Bells and Whistles">
-    <h2>Bells and Whistles</h2>
-    <p>For this part, I choose to change my ethnicity to Chinese. I used the web to find an image of the average Chinese Male's face.</p>
+<section id="4B: Extracting a Feature Descriptor for each feature point">
+    <h2>4B: Extracting a Feature Descriptor for each feature point</h2>
+    <p>Here, I used the Harris Interest Point Detector to detect the corner points in each image of each set. Here are my results.</p>
 
     <div class="image-container">
         <div class="phase-box">
-            <h3>Average Chinese Male Face</h3>
-            <img src="media/bw/average_asian_male.jpg" alt="dx cameraman 1">
+            <h3>Living Room #1, Harris Interest Points</h3>
+            <img src="media/mos1B/harris/Unknown-7.png" alt="dx cameraman 1">
+
+        </div>
+        <div class="phase-box">
+            <h3>Living Room #2, Harris Interest Points</h3>
+            <img src="media/mos1B/harris/Unknown-6.png" alt="dx cameraman 1">
+
+        </div>
+
+        <div class="phase-box">
+            <h3>Living Room #3, Harris Interest Points</h3>
+            <img src="media/mos1B/harris/Unknown-5.png" alt="dx cameraman 1">
         </div>
     </div>
 
     <div class="image-container">
         <div class="phase-box">
-            <h3>Changing Only My Face Shape</h3>
-            <img src="media/bw/aaravtochinese.png" alt="dx cameraman 1">
+            <h3>Balcony View #1, Harris Interest Points</h3>
+            <img src="media/mos2B/harris/Unknown-5.png" alt="dx cameraman 1">
+
+        </div>
+        <div class="phase-box">
+            <h3>Balcony View #2, Harris Interest Points</h3>
+            <img src="media/mos2B/harris/Unknown-6.png" alt="dx cameraman 1">
+
         </div>
 
         <div class="phase-box">
-            <h3>Changing Only My Appearence</h3>
-            <img src="media/bw/chinesetoaarav.png" alt="dx cameraman 1">
+            <h3>Balcony View #3, Harris Interest Points</h3>
+            <img src="media/mos2B/harris/Unknown-7.png" alt="dx cameraman 1">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>Kitchen #1, Harris Interest Points</h3>
+            <img src="media/mos3B/harris/Unknown-5.png" alt="dx cameraman 1">
+
+        </div>
+        <div class="phase-box">
+            <h3>Kitchen #2, Harris Interest Points</h3>
+            <img src="media/mos3B/harris/Unknown-6.png" alt="dx cameraman 1">
+
         </div>
 
         <div class="phase-box">
-            <h3>Changing Both Shape and Appearence</h3>
-            <img src="media/bw/both.png" alt="dx cameraman 1">
+            <h3>Kitchen #3, Harris Interest Points</h3>
+            <img src="media/mos3B/harris/Unknown-7.png" alt="dx cameraman 1">
         </div>
     </div>
 
 </section>
-
 
 </body>
 </html>
