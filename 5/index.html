@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cs180</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #007acc;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        section {
+            padding: 20px;
+            margin: 20px auto;
+            background-color: white;
+            max-width: 1000px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #007acc;
+        }
+        a {
+            color: #646b6e;
+            text-decoration: none; 
+        }
+
+
+        a:visited {
+            color: #646b6e; 
+        }
+
+
+        a:hover {
+            color: #ff6600; 
+        }
+
+
+        a:active {
+            color: #ff0000; 
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+        }
+    </style>
+    <title>Image Alignment Phases</title>
+    <style>
+        .image-container {
+            display: flex; 
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+
+        .phase-box {
+            text-align: center;
+            margin: 0 10px;
+        }
+
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+
+        .displacement {
+            font-size: 12px;
+            margin-top: 5px;
+            color: #333;
+        }
+
+        h3 {
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+    </style>
+    <title>GIF Reset</title>
+    <style>
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+
+
+</head>
+<body>
+
+<header>
+    <h1>CS 180 Project 5 ––Fun With Diffusion Models!</h1>
+    <p><b>Aarav Patel</b></p>
+</header>
+
+
+<section id="overview">
+    <h2>Overview</h2>
+    <p>In Project 5, we gain an introduction to diffusion models and some of their interesting applications. We begin in Project 5A by leveraging the pre-trained DeepFloyd model to learn about sampling, denoising, classifier-free guidance, image-to-image translation, inpainting, visual anagrams, and more. In Project 5B, we implement and train our diffusion model on the MNIST dataset.</p>
+
+</section>
+
+<section id="5A: Part 0: Setup">
+    <h2>5A: Part 0: Setup</h2>
+    <p>During the setup, we downloaded the DeepFloyd model and gave it sample text prompts to generate images. I experimented with changing the num_inference_steps. I tried 10 steps and 100 steps. Clearly, the 100 step trials contain more detailed, sharper images. I also seeded my project with 6174.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>"a rocket ship" @ 10 steps</h3>
+            <img src="media/P0/10_steps/a_rocket_ship.png" alt="Placeholder Image 1">
+        </div>
+        
+        <div class="phase-box">
+            <h3>"a man wearing a hat" @ 10 steps</h3>
+            <img src="media/P0/10_steps/a_man_wearing_a_hat.png" alt="Placeholder Image 2">
+        </div>
+
+        <div class="phase-box">
+            <h3>"an oil painting of a snowy mountain village" @ 10 steps</h3>
+            <img src="media/P0/10_steps/an_oil_painting_of_a_snowy_mountain_village.png" alt="Placeholder Image 3">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>"a rocket ship" @ 100 steps</h3>
+            <img src="media/P0/100_steps/a_rocket_ship.png" alt="Placeholder Image 1">
+        </div>
+        
+        <div class="phase-box">
+            <h3>"a man wearing a hat" @ 100 steps</h3>
+            <img src="media/P0/100_steps/a_man_wearing_a_hat.png" alt="Placeholder Image 2">
+        </div>
+
+        <div class="phase-box">
+            <h3>"an oil painting of a snowy mountain village" @ 100 steps</h3>
+            <img src="media/P0/100_steps/an_oil_painting_of_a_snowy_mountain_village.png" alt="Placeholder Image 3">
+        </div>
+    </div>
+</section>
+
+
+
+<section id="5A: Part 1: Sampling Loops: 1.1 Implementing the Forward Process">
+    <h2>5A: Part 1: Sampling Loops: 1.1 Implementing the Forward Process</h2>
+    <p>During this step, I wrote the function that adds noise to a clean image based on the given noise level (a function parameter).</p>
+
+    <div class="image-container" style="display: flex; justify-content: center;">
+        <img src="media/P1/1p1/Unknown.png" alt="Sample Image">
+    </div>
+
+</section>
+
+
+<section id="5A: Part 1: Sampling Loops: 1.2 Classical Denoising">
+    <h2>5A: Part 1: Sampling Loops: 1.2 Classical Denoising</h2>
+    <p>In this part, I implemented classical denoising by convolving the noisy input with a 2D Gaussian. The aim of this is to remove high-frequency noise from the image.</p>
+        <div class="image-container" style="display: flex; justify-content: center;">
+            <img src="media/P1/1p2/Unknown.png" alt="Sample Image1">
+        </div>
+
+    </section>
+
+
+<section id="5A: Part 1: Sampling Loops: 1.3 One-Step Denoising">
+    <h2>5A: Part 1: Sampling Loops: 1.3 One-Step Denoising</h2>
+    <p>In this part, I used the DeepFloyd diffusion model to denoise images generated through the forward process. The model was trained with text conditioning–– we included "a high quality photo" as a prompt embedding. Stage 1 of the UNet model is where the actual denoiser is found. We arrived at the clean image by solving for it using the equation from the forward process. This method significantly outperformed classical denoising.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/P1/1p3/v1/Unknown.png" alt="Image 1">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/P1/1p3/v1/Unknown-2.png" alt="Image 6">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/P1/1p3/v1/Unknown-3.png" alt="Image 5">
+        </div>
+    </div>
+
+</section>
+
+
+<section id="5A: Part 1: Sampling Loops: 1.4 Iterative Denoising">
+    <h2>5A: Part 1: Sampling Loops: 1.4 Iterative Denoising</h2>
+    <p>The goal of this section was to iteratively denoise an image until it returns to its original clean state. However, if we were to iterate step by step, this task would quickly become computationally expensive. Instead, we used strided timestamps to "skip around." For this part and the rest of the project, I used a stride of 30 steps.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/P1/1p4/v1/Unknown.png" alt="Image 1">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/P1/1p4/v1/Unknown-2.png" alt="Image 2">
+        </div>
+    </div>
+</section>
+
+<section id="5A: Part 1: Sampling Loops: 1.5 Diffusion Model Sampling">
+    <h2>5A: Part 1: Sampling Loops: 1.5 Diffusion Model Sampling</h2>
+    <p>I used the iterative denoising from the last section to generate new images for this part. I passed in an image of random noise (with the same dimensions as the test image) and denoised it using iterative denoising. Here, we used "a high quality photo" as the text embedding for this exercise. The results were not significant. However, we will address this in the next section.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/P1/1p5/solos/Unknown.png" alt="Sample 1">
+            <p>Sample 1</p>
+        </div>
+        <div class="phase-box">
+            <img src="media/P1/1p5/solos/Unknown-2.png" alt="Sample 2">
+            <p>Sample 2</p>
+        </div>
+        <div class="phase-box">
+            <img src="media/P1/1p5/solos/Unknown-3.png" alt="Sample 3">
+            <p>Sample 3</p>
+        </div>
+        <div class="phase-box">
+            <img src="media/P1/1p5/solos/Unknown-4.png" alt="Sample 4">
+            <p>Sample 4</p>
+        </div>
+        <div class="phase-box">
+            <img src="media/P1/1p5/solos/Unknown-5.png" alt="Sample 5">
+            <p>Sample 5</p>
+        </div>
+    </div>
+</section>
+
+<section id="5A: Part 1: Sampling Loops: 1.6 Classifier-Free Guidance (CFG)">
+    <h2>5A: Part 1: Sampling Loops: 1.6 Classifier-Free Guidance (CFG)</h2>
+    <p>In this section, we implemented classifier-free guidance (CFG) to improve the output from the last part. In CFG, we provide the model with an additional text prompt to help "guide" it–– we use an additional estimate to compute the final estimate used for the denoising. The downside is that this reduces the variety of our outputs. I used the default parameters provided in the project spec for this section and all subsequent sections. However, the results were significantly better.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/P1/1p6/Unknown-2.png" alt="CFG Image">
+        </div>
+    </div>
+</section>
+
+<section id="5A: Part 1: Sampling Loops: 1.7 Image-to-image Translation">
+    <h2>5A: Part 1: Sampling Loops: 1.7 Image-to-image Translation</h2>
+    <p>This part involved adding noise to an existing image and using our model to denoise it back to its original state. However, this is usually not a perfect reversal and often results in [cool] edits to the original image.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/P1/1p7/0/Unknown.png" alt="Image 1">
+        </div>
+    </div>
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/P1/1p7/0/Unknown-2.png" alt="Image 2">
+        </div>
+    </div>
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/P1/1p7/0/Unknown-3.png" alt="Image 3">
+        </div>
+    </div>
+</section>
+
+<section id="5A: Part 1: Sampling Loops: 1.7.1 Editing Hand-Drawn and Web Images">
+    <h2>5A: Part 1: Sampling Loops: 1.7.1 Editing Hand-Drawn and Web Images</h2>
+    <p>Here we repeated the last section's exercise with some new images–– one from the web (Johnny Test, my favorite cartoon character), and two that I drew (a car and house). This process seems to work better with less realistic images as you can see.</p>
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/P1/1p7/1/Unknown.png" alt="Image 1">
+        </div>
+    </div>
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/P1/1p7/1/Unknown1.png" alt="Image 2">
+        </div>
+    </div>
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/P1/1p7/1/Unknown-2.png" alt="Image 3">
+        </div>
+    </div>
+
+</section>
+
+
+<section id="5A: Part 1: Sampling Loops: 1.7.2 Inpainting">
+    <h2>5A: Part 1: Sampling Loops: 1.7.2 Inpainting</h2>
+    <p>In this section, we used the diffusion models to generate new features for a certain part of an image. We covered the rest of the image with a mask to preserve it. Here are some examples:</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/P1/1p7/2/Unknown-2.png" alt="Image 1">
+        </div>
+    </div>
+</section>
+
+<section id="5A: Part 1: Sampling Loops: 1.7.3 Text-Conditional Image-to-image Translation">
+    <h2>5A: Part 1: Sampling Loops: 1.7.3 Text-Conditional Image-to-image Translation</h2>
+    <p>In this part, we repeat an image-to-image translation, but we also provide a text prompt to the model–– allowing us to have some control over the result. For the Campanile example, the prompt was "a rocket ship."</p>
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/P1/1p7/3/Unknown.png" alt="Image 1">
+        </div>
+    </div>
+</section>
+
+<section id="5A: Part 1: Sampling Loops: 1.8 Visual Anagrams">
+    <h2>5A: Part 1: Sampling Loops: 1.8 Visual Anagrams</h2>
+    <p>The aim of this section was to generate visual anagrams: images that have different interpretations depending on their orientation (in our case, the image flipped upside down would show something different). In the following example, "an oil painting of people around a campfire" is displayed, and when flipped, "an oil painting of an old man" can be seen.</p>
+</section>
+
+<section id="5A: Part 1: Sampling Loops: 1.9 Hybrid Images">
+    <h2>5A: Part 1: Sampling Loops: 1.9 Hybrid Images</h2>
+    <p>Finally, in this section, we created hybrid images using factorized diffusion. Similar to our previous project, hybrid images are created by blending high and low-frequency components of two images (or, in our case, two estimates for noise).</p>
+</section>
+
+<section id="5B: Part 1: Training a Single-Step Denoising UNet: 1.2 Using the UNet to Train a Denoiser">
+    <h2>5B: Part 1: Training a Single-Step Denoising UNet: 1.2 Using the UNet to Train a Denoiser</h2>
+    <p>I simulated the noising process on clean MNIST digits by progressively adding noise. The visualization shows how the noise accumulates over time, demonstrating the gradual transition from a clean image to pure noise.</p>
+    <div class="phase-box">
+        <h3>Varying levels of noise on sample data</h3>
+        <img src="media/5B/varying_noise.png" alt="Sample Image1">
+    </div>
+</section>
+
+<section id="5B: Part 1: Training a Single-Step Denoising UNet: 1.2.1 Training">
+    <h2>5B: Part 1: Training a Single-Step Denoising UNet: 1.2.1 Training</h2>
+    <p>I trained the UNet model to denoise noisy MNIST images by using pairs of clean and noised images generated. Over five epochs, the network gradually improved, as shown by the loss curve and the visual results, with clear progress from the 1st epoch to the 5th.</p>
+    <div class="image-container" style="display: flex; justify-content: center;">
+        <img src="media/5B/Unknown.png" alt="Sample Image1">
+    </div>
+    <div class="image-container" style="display: flex; justify-content: center;">
+        <img src="media/5B/Part1_epoch1.png" alt="Sample Image1">
+    </div>
+    <div class="image-container" style="display: flex; justify-content: center;">
+        <img src="media/5B/Part1_epoch5.png" alt="Sample Image1">
+    </div>
+</section>
+
+<section id="5B: Part 1: Training a Single-Step Denoising UNet: 1.2.2 Out-of-Distribution Testing">
+    <h2>5B: Part 1: Training a Single-Step Denoising UNet: 1.2.2 Out-of-Distribution Testing</h2>
+    <p>I tested the denoiser on MNIST digits with different noise levels it wasn’t trained for. The results showed how well the model could generalize, with better performance on low noise levels and more challenges as the noise increased.</p>
+    <div class="image-container" style="display: flex; justify-content: center;">
+        <img src="media/5B/1-2-2.png" alt="Sample Image1">
+    </div>
+</section>
+
+<section id="5B: Part 2: Training a Diffusion Model: 2.3 Sampling from the UNet">
+    <h2>5B: Part 2: Training a Diffusion Model: 2.3 Sampling from the UNet</h2>
+    <p>I trained the time-conditioned UNet and tracked the loss over all epochs to see how well the model was learning. After 5 and 20 epochs, I generated samples to visualize its performance. The samples improved significantly with more training, showing sharper and less noisy outputs at epoch 20 compared to epoch 5.</p>
+    <div class="image-container" style="display: flex; justify-content: center;">
+        <img src="media/5B/Unknown-1.png" alt ="Sample Image1">
+    </div>
+    <div class="image-container" style="display: flex; justify-content: center;">
+        <img src="media/5B/Unknown-2.png" alt = "Sample Image1">
+    </div>
+    <div class="image-container" style="display: flex; justify-content: center;">
+        <img src="media/5B/Unknown-3.png" alt="Sample Image1">
+    </div>
+</section>
+
+<section id="5B: Part 2: Training a Diffusion Model: 2.5 Sampling from the Class-Conditioned UNet">
+    <h2>5B: Part 2: Training a Diffusion Model: 2.5 Sampling from the Class-Conditioned UNet</h2>
+    <p>I trained the class-conditioned UNet. I sampled outputs after 5 and 20 epochs. At both stages, I generated 4 versions of each digit to highlight the quality of results. The samples after 20 epochs were noticeably less noisy compared to those at 5 epochs.</p>
+    <div class="image-container" style="display: flex; justify-content: center;">
+        <img src="media/5B/Unknown-4.png" alt="Sample Image1">
+    </div>
+    <div class="image-container" style="display: flex; justify-content: center;">
+        <img src="media/5B/Unknown-5.png" alt="Sample Image1">
+    </div>
+    <div class="image-container" style="display: flex; justify-content: center;">
+        <img src="media/5B/Unknown-6.png" alt="Sample Image1">
+    </div>
+</section>
+</body>
+</html>
