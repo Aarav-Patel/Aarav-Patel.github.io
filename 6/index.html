@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cs180</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #007acc;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        section {
+            padding: 20px;
+            margin: 20px auto;
+            background-color: white;
+            max-width: 1000px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #007acc;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        .image-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .image-row img {
+            max-width: calc(100% / 5 - 10px);
+        }
+        .single-image {
+            display: flex;
+            justify-content: center;
+        }
+        .equation {
+            text-align: center;
+            font-size: 1.2em;
+            font-style: italic;
+            margin: 20px 0;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+        }
+        ul {
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+        ul li {
+            margin-bottom: 10px;
+        }
+        .image-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .phase-box {
+            text-align: center;
+            margin: 0 10px;
+        }
+        .phase-box h3 {
+            color: #007acc;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .parameter-sets {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .parameter-set {
+            flex: 1;
+            margin: 0 10px;
+        }
+    </style>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+<header>
+    <h1>CS 180 Final Project–– Neural Radiance Fields!</h1>
+    <p><b>Aarav Patel</b></p>
+</header>
+
+<section id="overview">
+    <h2>Overview</h2>
+    <p>The first part of this project involved applying a Neural Field for 2D image reconstruction. After introducing the topic, the project evolved into leveraging Neural Radiance Fields (NeRFs) to represent a 3D space.</p>
+</section>
+
+
+<section id="part-1">
+    <h2>Part 1: Fit a Neural Field to a 2D Image</h2>
+    <p>This part aims to reconstruct a 2D image using a Neural Field, a simplification of the NeRF. I began by creating a Multilayer Perceptron (MLP) network with Sinusoidal Positional Encoding (PE) in PyTorch. The end goal is to input a coordinate to the model and have it output the color at that pixel. The PE increases the dimensionality of the input dimensions by applying a series of sinusoidal functions. The PE is controlled using a hyperparameter (L) that defines the frequency level at which to encode the input: as L increases, the PE encodes more complex information about the input coordinate and vice versa. The PE model used is shown below:</p>
+
+    <div class="equation">
+        \( PE(x) = \{x, \sin(2^0\pi x), \cos(2^0\pi x), \sin(2^1\pi x), \cos(2^1\pi x), \ldots, \sin(2^{L-1}\pi x), \cos(2^{L-1}\pi x)\} \)
+    </div>
+
+    <p>For my MLP, I used the model provided in the project specifications. The input layer (the size of this layer corresponds to the dimension of the encoded input determined by L) is the input coordinate encoded using the PE. This feeds into the two subsequent hidden layers (fully connected linear layers of size 256 with ReLU non-linearities). Lastly, the output layer maps the hidden features to 3 output dimensions representing RGB. A Sigmoid activation is then applied to constrain the output between 0 and 1 (valid RGB range).</p>
+    
+    <p>Since training the network with every pixel at each iteration is not feasible due to GPU limits, I implemented a Dataloader. The dataloader randomly samples N pixels from the image to provide the MLP for each iteration of training, where N is the batch size. Provides the MLP with data during the training process. Specifically, passing these N randomly sampled pixel coordinates along with their RGB values to the MLP allows us to supervise the training. I used mean squared error (MSE) loss between the predicted RGB and ground-truth RGB along with the Adam optimizer to train the model. However, I used the Peak signal-to-noise ratio (PSNR) computed from the MSE, as shown below, to measure the reconstruction quality of the model's predictions.</p>
+
+    <div class="equation">
+        \( PSNR = 10 \cdot \log_{10}\left(\frac{1}{MSE}\right) \)
+    </div>
+
+    <p>To begin, I first used the default parameters provided by the project: </p>
+
+    <div style="text-align: center;">
+        <ul style="display: inline-block; text-align: left;">
+            <li>L = 10</li>
+            <li>hidden_dimensions = 256</li>
+            <li>batch_size = 10,000</li>
+            <li>num_iterations = 2,300</li>
+            <li>learning_rate = 1e-2</li>
+        </ul>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/1/Default/0.png" alt="Image 1">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/Default/1.png" alt="Image 2">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/Default/2.png" alt="Image 3">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/Default/3.png" alt="Image 4">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/Default/4.png" alt="Image 5">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>"Original Image"</h3>
+            <img src="media/1/fox.jpeg" alt="Original Image" style="width: 30%; height: auto;">
+        </div>
+    </div>
+
+    <p>As you can see, the default hyperparameters did decently well in reconstructing the image with a final PSNR of 26.36.</p>
+
+    <p>Next, I aimed to fine-tune some of the hyperparameters to get a better PSNR score; specifically, I studied the effects of altering L and Learning Rate.</p>
+
+    <p>In my study of L, I kept all the other hyperparameters constant. Below are the three sets of hyperparameters that I used in this study. Note that Set 2 is identical to the default parameters–– hence, it was not trained again. Also, the input dimensions used to instantiate the model differed based on the value of L (which I've recorded below).</p>
+
+
+    <div class="parameter-sets">
+        <div class="parameter-set">
+            <p>Set 1 Parameters:</p>
+            <ul>
+                <li>L = 5 (input dimension = 22)</li>
+                <li>hidden_dimensions = 256</li>
+                <li>batch_size = 10,000</li>
+                <li>num_iterations = 2,300</li>
+                <li>learning_rate = 1e-2</li>
+            </ul>
+        </div>
+        <div class="parameter-set">
+            <p>Set 2 Parameters:</p>
+            <ul>
+                <li>L = 10 (input dimension = 42)</li>
+                <li>hidden_dimensions = 256</li>
+                <li>batch_size = 10,000</li>
+                <li>num_iterations = 2,300</li>
+                <li>learning_rate = 1e-2</li>
+            </ul>
+        </div>
+        <div class="parameter-set">
+            <p>Set 3 Parameters:</p>
+            <ul>
+                <li>L = 15 (input dimension = 62)</li>
+                <li>hidden_dimensions = 256</li>
+                <li>batch_size = 10,000</li>
+                <li>num_iterations = 2,300</li>
+                <li>learning_rate = 1e-2</li>
+            </ul>
+        </div>
+    </div>
+
+    <p>Here is how Set 1 (L = 5) performed:</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/1/L/5/0.png" alt="Image 1">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/L/5/1.png" alt="Image 2">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/L/5/2.png" alt="Image 3">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/L/5/3.png" alt="Image 4">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/L/5/4.png" alt="Image 5">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>"Original Image"</h3>
+            <img src="media/1/fox.jpeg" alt="Original Image" style="width: 30%; height: auto;">
+        </div>
+    </div>
+
+
+    <p>Here is how Set 3 (L = 15) performed:</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/1/L/15/0.png" alt="Image 1">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/L/15/1.png" alt="Image 2">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/L/15/2.png" alt="Image 3">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/L/15/3.png" alt="Image 4">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/L/15/4.png" alt="Image 5">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>"Original Image"</h3>
+            <img src="media/1/fox.jpeg" alt="Original Image" style="width: 30%; height: auto;">
+        </div>
+    </div>
+
+
+    <p>As shown in the plot below, Set 3 performed the best with a PSNR of 26.62.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/1/L/Exp/L_exp.png" alt="Original Image">
+        </div>
+    </div>
+
+    <p>From the experiments above, I concluded that L = 15 was the most ideal value of those tested. I then held L = 15 constant and studied the Learning Rate using the 3 Sets below. Note that Set 2 below was the same as Set 3 in the prior experiment–– hence, it was not trained again.</p>
+
+    <div style="display: flex; justify-content: space-between;">
+        <div>
+            <p>Set 1 Parameters:</p>
+            <ul>
+                <li>L = 15</li>
+                <li>hidden_dimensions = 256</li>
+                <li>batch_size = 10,000</li>
+                <li>num_iterations = 2,300</li>
+                <li>learning_rate = 5e-3</li>
+            </ul>
+        </div>
+        <div>
+            <p>Set 2 Parameters:</p>
+            <ul>
+                <li>L = 15</li>
+                <li>hidden_dimensions = 256</li>
+                <li>batch_size = 10,000</li>
+                <li>num_iterations = 2,300</li>
+                <li>learning_rate = 1e-2</li>
+            </ul>
+        </div>
+        <div>
+            <p>Set 3 Parameters:</p>
+            <ul>
+                <li>L = 15</li>
+                <li>hidden_dimensions = 256</li>
+                <li>batch_size = 10,000</li>
+                <li>num_iterations = 2,300</li>
+                <li>learning_rate = 1.5e-2</li>
+            </ul>
+        </div>
+    </div>
+
+    <p>Here is how Set 1 (Learning Rate = 5e-3) performed:</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/1/LR/p005/Unknown.png" alt="Image 1">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/LR/p005/Unknown-2.png" alt="Image 2">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/LR/p005/Unknown-3.png" alt="Image 3">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/LR/p005/Unknown-4.png" alt="Image 4">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/LR/p005/Unknown-5.png" alt="Image 5">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>"Original Image"</h3>
+            <img src="media/1/fox.jpeg" alt="Original Image" style="width: 30%; height: auto;">
+        </div>
+    </div>
+
+    <p>Here is how Set 3 (Learning Rate = 1.5e-2) performed:</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/1/LR/p015/Unknown.png" alt="Image 1">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/LR/p015/Unknown-2.png" alt="Image 2">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/LR/p015/Unknown-3.png" alt="Image 3">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/LR/p015/Unknown-4.png" alt="Image 4">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/LR/p015/Unknown-5.png" alt="Image 5">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>"Original Image"</h3>
+            <img src="media/1/fox.jpeg" alt="Original Image" style="width: 30%; height: auto;">
+        </div>
+    </div>
+
+
+    <p>As you can see from the plot below, Set 2 performed the best with a PSNR of 26.62.</p>
+
+    <div class="single-image">
+        <img src="media/1/LR/Exp/Unknown.png" alt="Original Image">
+    </div>
+
+    <p>From the experiments above, I concluded that  Learning Rate = 1e-2 was the ideal value for those tested. The finalized hyperparameters after tuning were:</p>
+
+    <ul>
+        <li>L = 15</li>
+        <li>hidden_dimensions = 256</li>
+        <li>batch_size = 10,000</li>
+        <li>num_iterations = 2,300</li>
+        <li>learning_rate = 1e-2</li>
+    </ul>
+
+    <p>Below, I've shown the progression of training a model with these hyperparameters at strategically chosen iterations instead of the previously evenly spaced displays. I used the PSNR plot to discern iterations where noticeable changes can be seen.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/1/final_progression/Unknown.png" alt="Image 1">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/final_progression/Unknown-2.png" alt="Image 2">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/final_progression/Unknown-3.png" alt="Image 3">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/final_progression/Unknown-5.png" alt="Image 4">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/final_progression/Unknown-6.png" alt="Image 5">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/final_progression/Unknown-7.png" alt="Image 6">
+        </div>
+    </div>
+
+    <p>I repeated this procedure for one of my images using these finalized hyperparameters.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/1/TestImg/ironman/Unknown.png" alt="Image 1">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/TestImg/ironman/Unknown-2.png" alt="Image 2">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/TestImg/ironman/Unknown-3.png" alt="Image 3">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/TestImg/ironman/Unknown-5.png" alt="Image 4">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/TestImg/ironman/Unknown-6.png" alt="Image 5">
+        </div>
+        <div class="phase-box">
+            <img src="media/1/TestImg/ironman/Unknown-9.png" alt="Image 6">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <h3>"Original Image"</h3>
+            <img src="media/1/TestImg/ironman/test1.jpeg" alt="Original Image" style="width: 50%; height: auto;">
+        </div>
+    </div>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/1/TestImg/ironman/chart.png" alt="Chart Image">
+        </div>
+    </div>
+
+</section>
+
+<section id="part-2">
+    <h2>Part 2: Fit a Neural Radiance Field from Multi-view Images</h2>
+    <p>This section focuses on 3D scene reconstruction using camera intrinsics/extrinsics and NeRFs. By using sensor information from different viewpoints, you can train a model on a 3D scene. </p>
+    
+    <h3>2.1: Create Rays from Cameras</h3>
+    <p>Placeholder content for this section.</p>
+
+    <h3>2.2: Sampling</h3>
+    <p>Placeholder content for this section.</p>
+
+    <h3>2.3: Putting the Dataloading Together</h3>
+    <p>Placeholder content for this section.</p>
+
+    <h3>2.4: Neural Radiance Field (NeRF)</h3>
+    <p>Placeholder content for this section.</p>
+
+    <h3>2.5: Volume Rendering</h3>
+    <p>Placeholder content for this section.</p>
+
+    <h3>Final Results</h3>
+    <p>Below I've shown the the progress of my model while training (one perspective)</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/2/Final/Unknown-2.png" alt="Image 1">
+        </div>
+        <div class="phase-box">
+
+            <img src="media/2/Final/Unknown-3.png" alt="Image 2">
+        </div>
+        <div class="phase-box">
+
+            <img src="media/2/Final/Unknown-4.png" alt="Image 3">
+        </div>
+        <div class="phase-box">
+
+            <img src="media/2/Final/Unknown-5.png" alt="Image 4">
+        </div>
+        <div class="phase-box">
+
+            <img src="media/2/Final/Unknown-6.png" alt="Image 5">
+        </div>
+    </div>
+
+    <p>Here, I show a video of this transisition taking place (referring to the images above)</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/2/Final/trans.gif" alt="Training Progress GIF" style="width: 100%; height: auto;">
+        </div>
+    </div>
+
+    <p>Here is the training plot for my model</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/2/Final/skinny.png" alt="Training Plot">
+        </div>
+    </div>
+
+    <p>Here I show a video of my model performing a novel rendering of the 3D scene (spherical rendering)</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/2/Final/novel_view.gif" alt="Training Progress GIF" style="width: 100%; height: auto;">
+        </div>
+    </div>
+
+    <h3>Bells and Whistles</h3>
+    <p>For this section, I rendered the Lego video with a different background color than black. Instead of retraining my model, the approach I took involved adding the injected color with the total transmittance––filling regions where no objects are present. </p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/2/Final/colo_view.gif" alt="Training Progress GIF" style="width: 100%; height: auto;">
+        </div>
+    </div>
+</section>
+
+<section id="conclusion">
+    <h2>Conclusion</h2>
+    <p>This was my favorite project so far this semester besides Project 3 (my Dad recently asked me to morph him into Tom Hanks). I learned alot about how to implement a resrearch paper and actually understand step by step how novel ML models work. I also got really good practice with PyTorch. Thanks for a great semester!</p>
+</section>
+
+
+
+<footer>
+</footer>
+
+</body>
+</html>
