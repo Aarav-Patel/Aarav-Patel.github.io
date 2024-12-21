@@ -158,7 +158,7 @@
 
     <div class="image-container">
         <div class="phase-box">
-            <h3>"Original Image"</h3>
+            <h3>Original Image</h3>
             <img src="media/1/fox.jpeg" alt="Original Image" style="width: 30%; height: auto;">
         </div>
     </div>
@@ -225,7 +225,7 @@
 
     <div class="image-container">
         <div class="phase-box">
-            <h3>"Original Image"</h3>
+            <h3>Original Image</h3>
             <img src="media/1/fox.jpeg" alt="Original Image" style="width: 30%; height: auto;">
         </div>
     </div>
@@ -253,7 +253,7 @@
 
     <div class="image-container">
         <div class="phase-box">
-            <h3>"Original Image"</h3>
+            <h3>Original Image</h3>
             <img src="media/1/fox.jpeg" alt="Original Image" style="width: 30%; height: auto;">
         </div>
     </div>
@@ -324,7 +324,7 @@
 
     <div class="image-container">
         <div class="phase-box">
-            <h3>"Original Image"</h3>
+            <h3>Original Image</h3>
             <img src="media/1/fox.jpeg" alt="Original Image" style="width: 30%; height: auto;">
         </div>
     </div>
@@ -351,7 +351,7 @@
 
     <div class="image-container">
         <div class="phase-box">
-            <h3>"Original Image"</h3>
+            <h3>Original Image</h3>
             <img src="media/1/fox.jpeg" alt="Original Image" style="width: 30%; height: auto;">
         </div>
     </div>
@@ -421,7 +421,7 @@
 
     <div class="image-container">
         <div class="phase-box">
-            <h3>"Original Image"</h3>
+            <h3>Original Image</h3>
             <img src="media/1/TestImg/ironman/test1.jpeg" alt="Original Image" style="width: 50%; height: auto;">
         </div>
     </div>
@@ -439,16 +439,25 @@
     <p>This section focuses on 3D scene reconstruction using camera intrinsics/extrinsics and NeRFs. By using sensor information from different viewpoints, you can train a model on a 3D scene. </p>
     
     <h3>2.1: Create Rays from Cameras</h3>
-    <p>In this section, I created the helper functions for the rest of the project. I created: 1) Camera to World Coordinate Conversion, 2) Pixel to Camera Coordinate Conversion, and 3) Pixel to Ray. </p>
+    <p>In this part, I created three helper functions to support the NeRF. First, I implemented camera-to-world coordinate conversion using a rotation matrix and translation vector. Next, I implemented pixel-to-camera coordinate conversion. Using the pinhole camera model, the intrinsic camera matrix is used to project 3D points from the camera coordinate system into 2D-pixel locations. Inverting the process recovers the 3D camera coordinates from the pixel locations and depth values. Lastly, I implemented pixel-to-ray generation. The ray origins correspond to the camera's location. The ray directions are derived from normalizing the difference between world coordinates for points along the ray and the ray origin.</p>
 
     <h3>2.2: Sampling</h3>
-    <p>In this section, I implemented sampling functions to help the NeRF become more robust.</p>
+    <p>First, I implemented the code to sample random rays from training images. The process selects rays by sampling random images and then selecting random pixel coordinates within each image. The process then uses the pixel_to_ray function created earlier to compute the ray origins and directions. For the pixels sampled from the training images, this process also retrieves their RGB color. Next, I implemented the process that samples points along rays. It begins by decomposing the ray in uniformly spaced points between the predefined range and defining sample positions along each ray. Pertrubution is used to make sure all the points are touched during training. Finally, using the ray origin and direction, we can create a set of 3D points along the ray.</p>
 
+    <h3>2.3: Putting the Dataloading All Together</h3>
+    <p>Here, I created the dataloader to sample the rays during the training process. It randomly samples pixel coordinates from the training images and uses them to generate ray origins and directions by converting the 2D pixel coordiantes into camera space and transforming them into world space. To supervise the model, the true pixel colors for the sampled coordinates are also served during training. Below, I've used the provided sample code to test my implementation and produce a 3D visual of the rays, cameras, and sampled 3D points.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/2/Final/rays.png" alt="Rays and Samples" style="width: 40%; height: auto;">
+        </div>
+    </div>
+    
     <h3>2.4: Neural Radiance Field (NeRF)</h3>
-    <p>In this section, I defined the NeRF architecture for my project. It was similar to Part 1, but with a few differences like input is now 3D world coordinates, the network was deeper, and I was injecting the input into the middle of the MLP</p>
+    <p>Here, I created the NeRF model to predict the color and density of points in 3D space. The model expands on the 2D model used in Part 1. Once again, the coordinates are first processed with sinusoidal positional encoding (PE). The model is similar to the MLP from Part 1, but it has a few differences. First, the input is now in 3D and we are outputting the density for the 3D coordinates in addition to the color. Second, the MLP is deeper as a more challenging task requires a more robust network. Third, the encoded input is injected into the middle of the MLP so that the deeper network doesn't forget about the input.</p>
 
     <h3>2.5: Volume Rendering</h3>
-    <p>In section, I defined the core volume rendering function.</p>
+    <p>Here, I wrote the function to compute the core volume rendering equation. It determines the final rendered colors for a point using the rays that pass through it. The original function was represented as a continous integral, so we can discretize it using a sum. As parameters, the function takes densities, colors, and interval between sampled points on a ray. I used this function to create the frames for the novel scene.</p>
 
     <h3>Final Results</h3>
     <p>Below I've shown the the progress of my model while training (one perspective)</p>
@@ -475,11 +484,11 @@
         </div>
     </div>
 
-    <p>Here, I show a video of this transisition taking place (referring to the images above)</p>
+    <p>Here, I show a video of this transisition taking place (referring to the images above). Reload the page to see the restart animation.</p>
 
     <div class="image-container">
         <div class="phase-box">
-            <img src="media/2/Final/trans.gif" alt="Training Progress GIF" style="width: 100%; height: auto;">
+            <img src="media/2/Final/trans.gif" alt="Training Progress GIF" onclick="this.src='media/2/Final/trans.gif'">
         </div>
     </div>
 
@@ -491,20 +500,28 @@
         </div>
     </div>
 
-    <p>Here I show a video of my model performing a novel rendering of the 3D scene (spherical rendering)</p>
+    <p>Here I show a visual of the rays and samples I drew at a single training step (along with the cameras). I only show the first 100 rays to avoid overcrowding the image.</p>
 
     <div class="image-container">
         <div class="phase-box">
-            <img src="media/2/Final/novel_view.gif" alt="Training Progress GIF" style="width: 100%; height: auto;">
+            <img src="media/2/Final/single_iter_midway.png" alt="Rays and Samples" style="width: 40%; height: auto;">
+        </div>
+    </div>
+
+    <p>Here I show a video of my model performing a novel rendering of the 3D scene (spherical rendering). Reload the page to see the restart animation.</p>
+
+    <div class="image-container">
+        <div class="phase-box">
+            <img src="media/2/Final/novel_view.gif" alt="Training Progress GIF" onclick="this.src='media/2/Final/novel_view.gif'">
         </div>
     </div>
 
     <h3>Bells and Whistles</h3>
-    <p>For this section, I rendered the Lego video with a different background color than black. Instead of retraining my model, the approach I took involved adding the injected color with the total transmittance––filling regions where no objects are present. </p>
+    <p>For this section, I rendered the Lego video with a different background color than black. Instead of retraining my model, the approach I took involved adding the injected color with the total transmittance––filling regions where no objects are present. Reload the page to see the restart animation.</p>
 
     <div class="image-container">
         <div class="phase-box">
-            <img src="media/2/Final/colo_view.gif" alt="Training Progress GIF" style="width: 100%; height: auto;">
+            <img src="media/2/Final/colo_view.gif" alt="Color View GIF" onclick="this.src='media/2/Final/colo_view.gif'">
         </div>
     </div>
 </section>
